@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="content-shell">
+    <p class="eyebrow">Projects</p>
+    <h1>Software projects</h1>
+    <p>Selected web application, backend, AI, data and research-oriented projects.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="content-shell">
+    <div class="card-grid">
+      {% for project in projects %}
+        {% include "projects/includes/project_card.html" with project=project %}
+      {% empty %}
+        <p class="empty-state">Projects will appear here when marked as published in Django Admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

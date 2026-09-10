@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero section" aria-labelledby="hero-title">
+  <div class="content-shell hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">{% if profile %}{{ profile.professional_title }}{% else %}Software Engineer{% endif %}</p>
+      <h1 id="hero-title">{% if profile %}{{ profile.name }}{% else %}Md. Naimuzzaman Fahim{% endif %}</h1>
+      <p class="hero-lede">{% if profile and profile.tagline %}{{ profile.tagline }}{% else %}I build web applications, backend systems, APIs, AI-powered applications and data-driven solutions.{% endif %}</p>
+      <div class="action-row">
+        <a class="button-link" href="{% url 'projects:list' %}">View Projects</a>
+        {% if active_resume %}
+          <a class="button-link button-secondary" href="{{ active_resume.file.url }}" download>Download Resume</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="hero-visual{% if profile and profile.profile_picture %} hero-visual-profile{% endif %}">
+      {% if profile and profile.profile_picture %}
+        <img class="profile-picture" src="{{ profile.profile_picture.url }}" alt="{{ profile.name }} profile picture">
+      {% else %}
+        <div class="orbit-card" aria-hidden="true">
+          <span>Backend</span><span>APIs</span><span>AI + Data</span><span>Django</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about" aria-labelledby="about-title">
+  <div class="content-shell two-column">
+    <div>
+      <p class="eyebrow">About</p>
+      <h2 id="about-title">{% if profile and profile.about_headline %}{{ profile.about_headline }}{% else %}Software engineering with a practical backend and data focus.{% endif %}</h2>
+    </div>
+    <div class="stacked-content">
+      {% if profile and profile.about_description %}<p>{{ profile.about_description }}</p>{% endif %}
+      {% if about_items %}<div class="fact-grid">
+        {% for item in about_items %}
+          <div>{% if item.icon %}<span class="fact-icon" aria-hidden="true">{{ item.icon }}</span>{% endif %}<span>{{ item.title }}</span><strong>{{ item.value }}</strong></div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="skills" aria-labelledby="skills-title">
+  <div class="content-shell">
+    <div class="section-heading">
+      <p class="eyebrow">Skills</p>
+      <h2 id="skills-title">Technical toolkit</h2>
+    </div>
+    <div class="skill-grid">
+      {% for category in skill_categories %}
+        {% with skills=category.skills.all %}
+        {% if skills %}
+          <article class="skill-card">
+            <h3>{{ category.name }}</h3>
+            <div class="chip-row">
+              {% for skill in skills %}
+                <span class="chip">{{ skill.name }}</span>
+              {% endfor %}
+            </div>
+          </article>
+        {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="experience" aria-labelledby="experience-title">
+  <div class="content-shell">
+    <div class="section-heading">
+      <p class="eyebrow">Experience</p>
+      <h2 id="experience-title">Professional work</h2>
+    </div>
+    <div class="timeline">
+      {% for item in experiences %}
+        <article class="timeline-item">
+          <div class="timeline-date">{{ item.start_date|date:"F Y" }}{% if item.end_date %} &ndash; {{ item.end_date|date:"F Y" }}{% endif %}</div>
+          <div class="timeline-card">
+            <h3>{{ item.job_title }}{% if item.employment_type %} <span>{{ item.get_employment_type_display }}</span>{% endif %}</h3>
+            <p class="muted">{{ item.company }}{% if item.location %}, {{ item.location }}{% endif %}</p>
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+            {% if item.responsibilities %}<div class="rich-text">{{ item.responsibilities|linebreaks }}</div>{% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <p class="empty-state">Experience records can be published from Django Admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="projects" aria-labelledby="featured-projects-title">
+  <div class="content-shell">
+    <div class="section-heading heading-row">
+      <div>
+        <p class="eyebrow">Projects</p>
+        <h2 id="featured-projects-title">Featured projects</h2>
+      </div>
+      <a class="text-link" href="{% url 'projects:list' %}">All projects</a>
+    </div>
+    <div class="card-grid">
+      {% for project in featured_projects %}
+        {% include "projects/includes/project_card.html" with project=project %}
+      {% empty %}
+        <p class="empty-state">Featured projects will appear here when marked as published and featured in Django Admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="research" aria-labelledby="research-title">
+  <div class="content-shell">
+    <div class="section-heading heading-row">
+      <div>
+        <p class="eyebrow">Research</p>
+        <h2 id="research-title">Research work</h2>
+      </div>
+      <a class="text-link" href="{% url 'research:list' %}">Research archive</a>
+    </div>
+    <div class="card-grid">
+      {% for item in featured_research %}
+        {% include "research/includes/research_card.html" with item=item %}
+      {% empty %}
+        <p class="empty-state">Research entries will appear here when published from Django Admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-surface" id="education" aria-labelledby="education-title">
+  <div class="content-shell">
+    <div class="section-heading">
+      <p class="eyebrow">Education</p>
+      <h2 id="education-title">Academic background</h2>
+    </div>
+    <div class="timeline compact">
+      {% for item in education_items %}
+        <article class="timeline-item">
+          <div class="timeline-date">{{ item.start_date|date:"F Y" }}{% if item.end_date %} &ndash; {{ item.end_date|date:"F Y" }}{% endif %}</div>
+          <div class="timeline-card">
+            <h3>{{ item.degree }}</h3>
+            <p class="muted">{{ item.institution }}{% if item.field %} · {{ item.field }}{% endif %}</p>
+            {% if item.grade %}<p>{{ item.grade }}</p>{% endif %}
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if certifications %}
+<section class="section" id="certifications" aria-labelledby="certifications-title">
+  <div class="content-shell">
+    <div class="section-heading">
+      <p class="eyebrow">Certifications</p>
+      <h2 id="certifications-title">Certifications</h2>
+    </div>
+    <div class="card-grid">
+      {% for cert in certifications %}
+        <article class="content-card">
+          <h3>{{ cert.certificate_name }}</h3>
+          <p class="muted">{{ cert.issuing_organization }}</p>
+          {% if cert.credential_url %}<a class="text-link" href="{{ cert.credential_url }}" target="_blank" rel="noopener noreferrer">View credential</a>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="content-shell two-column">
+    <div>
+      <p class="eyebrow">Contact</p>
+      <h2 id="contact-title">Build, collaborate, or discuss an idea.</h2>
+      <p class="muted">Messages are sent privately and managed through Django Admin.</p>
+      {% if social_links %}
+        <div class="social-row" aria-label="Social links">
+          {% for link in social_links %}
+            <a class="social-link" href="{{ link.url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ link.platform }} (opens in a new tab)">
+              {% if link.icon_url_from_font_awesome %}{{ link.icon_url_from_font_awesome|safe }}{% else %}<span class="social-fallback">{{ link.platform|slice:":1" }}</span>{% endif %}
+              <span>{{ link.platform }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if contact_info %}<div class="contact-info-list">
+        {% for item in contact_info %}
+          <a class="contact-info-item" href="{{ item.href }}"{% if item.medium != "email" and item.medium != "phone" %} target="_blank" rel="noopener noreferrer"{% endif %}>
+            {% if item.icon_markup %}<span class="contact-icon" aria-hidden="true">{{ item.icon_markup|safe }}</span>{% endif %}
+            <span><strong>{{ item.display_label }}</strong><small>{{ item.value }}</small></span>
+          </a>
+        {% endfor %}
+      </div>{% endif %}
+    </div>
+    <form class="contact-form" method="post" novalidate>
+      {% csrf_token %}
+      {% if messages %}
+        <div class="messages" aria-live="polite">
+          {% for message in messages %}
+            <p class="message {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="form-field">
+        <label for="{{ contact_form.name.id_for_label }}">Name</label>
+        {{ contact_form.name }}
+        {{ contact_form.name.errors }}
+      </div>
+      <div class="form-field">
+        <label for="{{ contact_form.email.id_for_label }}">Email</label>
+        {{ contact_form.email }}
+        {{ contact_form.email.errors }}
+      </div>
+      <div class="form-field">
+        <label for="{{ contact_form.message.id_for_label }}">Message</label>
+        {{ contact_form.message }}
+        {{ contact_form.message.errors }}
+      </div>
+      <button class="button-link" type="submit">Send Message</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

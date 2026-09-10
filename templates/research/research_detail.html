@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="detail-page">
+  <header class="page-hero">
+    <div class="content-shell">
+      <p class="eyebrow">Research</p>
+      <h1>{{ research.title }}</h1>
+      {% if research.date %}<p>{{ research.date|date:"F Y" }}</p>{% endif %}
+      <div class="action-row">
+        {% if research.publication_url %}<a class="button-link" href="{{ research.publication_url }}" target="_blank" rel="noopener noreferrer">Publication</a>{% endif %}
+        {% if research.github_url %}<a class="button-link button-secondary" href="{{ research.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
+      </div>
+    </div>
+  </header>
+  <div class="content-shell detail-shell">
+    {% if research.image %}
+      <img class="detail-image" src="{{ research.image.url }}" alt="{{ research.title }} research image" loading="lazy">
+    {% endif %}
+    {% if research.abstract %}
+      <section class="detail-section"><h2>Abstract</h2><div class="rich-text">{{ research.abstract|linebreaks }}</div></section>
+    {% endif %}
+    {% if research.methodology %}
+      <section class="detail-section"><h2>Methodology</h2><div class="rich-text">{{ research.methodology|linebreaks }}</div></section>
+    {% endif %}
+    {% if research.results %}
+      <section class="detail-section"><h2>Results</h2><div class="rich-text">{{ research.results|linebreaks }}</div></section>
+    {% endif %}
+    {% if research.contribution %}
+      <section class="detail-section"><h2>Contribution</h2><div class="rich-text">{{ research.contribution|linebreaks }}</div></section>
+    {% endif %}
+    {% with technologies=research.technologies.all %}
+    {% if technologies %}
+      <section class="detail-section">
+        <h2>Technology stack</h2>
+        <div class="chip-row">
+          {% for tech in technologies %}
+            <span class="chip">{{ tech.name }}</span>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+    {% if not research.abstract and not research.methodology and not research.results and not research.contribution and not technologies %}
+      <p class="empty-state">Additional research details can be added from Django Admin.</p>
+    {% endif %}
+    {% endwith %}
+  </div>
+</article>
+{% endblock %}

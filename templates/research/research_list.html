@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="content-shell">
+    <p class="eyebrow">Research</p>
+    <h1>Research work</h1>
+    <p>Research connected to intelligent systems, AI, data and applied software engineering.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="content-shell">
+    <div class="card-grid">
+      {% for item in research_items %}
+        {% include "research/includes/research_card.html" with item=item %}
+      {% empty %}
+        <p class="empty-state">Research entries will appear here when published in Django Admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+<article class="content-card project-card">
+  {% if project.thumbnail %}
+    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }} thumbnail" loading="lazy">
+  {% endif %}
+  <div class="card-body">
+    <h3>{{ project.title }}</h3>
+    {% if project.short_description %}
+      <p>{{ project.short_description }}</p>
+    {% else %}
+      <p class="muted">Project details are available to complete from Django Admin.</p>
+    {% endif %}
+    {% with technologies=project.ordered_technologies|slice:":4" %}
+    {% if technologies %}
+      <div class="chip-row small">
+        {% for entry in technologies %}
+          <span class="chip">{{ entry.technology.name }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endwith %}
+    <div class="card-actions">
+      {% if project.github_url %}<a class="text-link" href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
+      {% if project.live_url %}<a class="text-link" href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer">Live Demo</a>{% endif %}
+      <a class="button-link button-compact" href="{{ project.get_absolute_url }}">View Project</a>
+    </div>
+  </div>
+</article>

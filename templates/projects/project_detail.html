@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="detail-page">
+  <header class="page-hero project-hero">
+    <div class="content-shell">
+      <div class="project-hero-content">
+        <div>
+          <p class="eyebrow">Project</p>
+          <h1>{{ project.title }}</h1>
+          {% if project.short_description %}<p>{{ project.short_description }}</p>{% endif %}
+          <div class="action-row">
+            {% if project.github_url %}<a class="button-link" href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
+            {% if project.live_url %}<a class="button-link button-secondary" href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer">Live Demo</a>{% endif %}
+          </div>
+        </div>
+        {% if project.thumbnail %}
+          <img class="project-hero-thumbnail" src="{{ project.thumbnail.url }}" alt="{{ project.title }} thumbnail">
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  <div class="content-shell detail-shell">
+    {% if project.detailed_description %}
+      <section class="detail-section">
+        <h2>Overview</h2>
+        <div class="rich-text">{{ project.detailed_description|linebreaks }}</div>
+      </section>
+    {% endif %}
+    {% with technologies=project.ordered_technologies %}
+    {% if technologies %}
+      <section class="detail-section">
+        <h2>Technology stack</h2>
+        <div class="chip-row">
+          {% for entry in technologies %}
+            <span class="chip">{{ entry.technology.name }}</span>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+    {% endwith %}
+    {% with feature_images=project.feature_images.all %}
+      {% if project.featured_image or feature_images %}
+        <section class="detail-section project-gallery" aria-labelledby="feature-images-title">
+          <h2 id="feature-images-title">Feature images</h2>
+          <div class="project-gallery-list">
+            {% if project.featured_image %}
+              <figure class="project-gallery-item">
+                <img src="{{ project.featured_image.url }}" alt="{{ project.title }} featured image" loading="lazy">
+              </figure>
+            {% endif %}
+            {% for image in feature_images %}
+              {% if image.is_active %}
+                <figure class="project-gallery-item">
+                  <img src="{{ image.image.url }}" alt="{% if image.alt_text %}{{ image.alt_text }}{% else %}{{ project.title }} feature image {{ forloop.counter }}{% endif %}" loading="lazy">
+                </figure>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    {% endwith %}
+    {% if not project.short_description and not project.detailed_description and not project.technologies.exists %}
+      <p class="empty-state">Additional project details can be added from Django Admin.</p>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

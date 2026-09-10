@@ -1,0 +1,27 @@
+<article class="content-card">
+  {% if item.image %}
+    <img src="{{ item.image.url }}" alt="{{ item.title }} research image" loading="lazy">
+  {% endif %}
+  <div class="card-body">
+    <h3>{{ item.title }}</h3>
+    {% if item.abstract %}
+      <p>{{ item.abstract|truncatewords:28 }}</p>
+    {% else %}
+      <p class="muted">Research details are available to complete from Django Admin.</p>
+    {% endif %}
+    {% with technologies=item.technologies.all %}
+    {% if technologies %}
+      <div class="chip-row small">
+        {% for tech in technologies %}
+          <span class="chip">{{ tech.name }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endwith %}
+    <div class="card-actions">
+      {% if item.publication_url %}<a class="text-link" href="{{ item.publication_url }}" target="_blank" rel="noopener noreferrer">Publication</a>{% endif %}
+      {% if item.github_url %}<a class="text-link" href="{{ item.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
+      <a class="button-link button-compact" href="{% url 'research:detail' item.slug %}">View Research</a>
+    </div>
+  </div>
+</article>
