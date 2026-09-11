@@ -39,11 +39,25 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
+VERCEL_HOSTNAMES = [
+    os.environ.get("VERCEL_URL"),
+    os.environ.get("VERCEL_BRANCH_URL"),
+    os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
+]
+for vercel_hostname in VERCEL_HOSTNAMES:
+    if vercel_hostname and vercel_hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(vercel_hostname)
+
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 if RENDER_EXTERNAL_HOSTNAME:
     render_origin = f"https://{RENDER_EXTERNAL_HOSTNAME}"
     if render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(render_origin)
+for vercel_hostname in VERCEL_HOSTNAMES:
+    if vercel_hostname:
+        vercel_origin = f"https://{vercel_hostname}"
+        if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(vercel_origin)
 
 
 INSTALLED_APPS = [
