@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div id="home-content" data-content-url="{% url 'core:home_content' %}">
 <section class="hero section" aria-labelledby="hero-title">
   <div class="content-shell hero-grid">
     <div class="hero-copy">
@@ -14,15 +15,20 @@
         {% endif %}
       </div>
     </div>
-    <div class="hero-visual{% if profile and profile.profile_picture %} hero-visual-profile{% endif %}">
-      {% if profile and profile.profile_picture %}
-        <img class="profile-picture" src="{{ profile.profile_picture.url }}" alt="{{ profile.name }} profile picture">
-      {% else %}
-        <div class="orbit-card" aria-hidden="true">
-          <span>Backend</span><span>APIs</span><span>AI + Data</span><span>Django</span>
-        </div>
-      {% endif %}
+    {% if profile and profile.profile_picture %}
+    <div class="hero-visual hero-visual-profile">
+      <div class="orbit-card" aria-hidden="true">
+        <span>Backend</span><span>APIs</span><span>AI + Data</span><span>Django</span>
+      </div>
+      <img class="profile-picture" src="{{ profile.profile_picture.url }}" alt="{{ profile.name }} profile picture" fetchpriority="high">
     </div>
+    {% else %}
+    <div class="hero-visual">
+      <div class="orbit-card" aria-hidden="true">
+        <span>Backend</span><span>APIs</span><span>AI + Data</span><span>Django</span>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </section>
 
@@ -226,4 +232,5 @@
     </form>
   </div>
 </section>
+</div>
 {% endblock %}

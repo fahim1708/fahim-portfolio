@@ -7,6 +7,7 @@ app_name = "core"
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
+    path("home-content/", views.HomeContentView.as_view(), name="home_content"),
     path("robots.txt", views.robots_txt, name="robots"),
     path("sitemap.xml", views.sitemap_xml, name="sitemap"),
 ]

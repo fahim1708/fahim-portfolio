@@ -16,6 +16,16 @@ from apps.research.models import Research
 class HomeView(TemplateView):
     template_name = "core/home.html"
 
+    def get(self, request, *args, **kwargs):
+        request.defer_portfolio_data = True
+        return self.render_to_response(
+            {
+                "page_title": "Md. Naimuzzaman Fahim | Software Engineer",
+                "meta_description": "Md. Naimuzzaman Fahim is a Software Engineer focused on web applications, backend systems, APIs, AI-powered applications, and data-driven solutions.",
+                "contact_form": ContactMessageForm(),
+            }
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = SiteProfile.objects.filter(is_active=True).first()
@@ -51,6 +61,11 @@ class HomeView(TemplateView):
         context["contact_form"] = form
         messages.error(request, "Please check the highlighted fields and try again.")
         return self.render_to_response(context)
+
+
+class HomeContentView(HomeView):
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data(**kwargs))
 
 
 def page_not_found(request, exception):

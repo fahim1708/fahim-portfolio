@@ -386,10 +386,23 @@ p {
 .profile-picture {
   position: relative;
   z-index: 1;
+  grid-area: 1 / 1;
   width: min(100%, 32rem);
   max-height: 38rem;
   object-fit: contain;
   object-position: center bottom;
+}
+
+.hero-visual-profile .orbit-card {
+  grid-area: 1 / 1;
+}
+
+.hero-visual-profile.is-image-error .profile-picture {
+  visibility: hidden;
+}
+
+.hero-visual-profile.is-image-loaded .orbit-card {
+  display: none;
 }
 
 .hero-visual::before,

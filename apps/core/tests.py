@@ -25,9 +25,12 @@ class PublicPageTests(TestCase):
         )
 
     def test_home_page_responds_successfully(self):
-        response = self.client.get(reverse("core:home"))
+        with self.assertNumQueries(0):
+            response = self.client.get(reverse("core:home"))
 
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "orbit-card")
+        self.assertContains(response, reverse("core:home_content"))
 
     def test_projects_pages_respond_successfully(self):
         list_response = self.client.get(reverse("projects:list"))
@@ -77,17 +80,21 @@ class DynamicProfileTests(TestCase):
         profile.profile_picture = self.make_png()
         profile.save()
 
-        response = self.client.get(reverse("core:home"))
+        shell_response = self.client.get(reverse("core:home"))
+        self.assertContains(shell_response, "orbit-card")
+        self.assertNotContains(shell_response, "/media/profile/")
 
+        response = self.client.get(reverse("core:home_content"))
         self.assertContains(response, "Admin Managed Name")
         self.assertContains(response, "Admin managed tagline")
         self.assertContains(response, "/media/profile/")
+        self.assertContains(response, "orbit-card")
 
     def test_active_about_items_are_dynamic(self):
         AboutItem.objects.create(title="Location", value="Dhaka", display_order=10)
         AboutItem.objects.create(title="Hidden", value="Do not show", is_active=False)
 
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
 
         self.assertContains(response, "Location")
         self.assertContains(response, "Dhaka")
@@ -98,25 +105,25 @@ class DynamicProfileTests(TestCase):
             name="Soft Skills", slug="soft-skills", display_order=20
         )
 
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
         self.assertNotContains(response, "Soft Skills")
 
         Skill.objects.create(name="Communication", category=soft_skills)
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
         self.assertContains(response, "Soft Skills")
         self.assertContains(response, "Communication")
 
         Skill.objects.filter(name="Communication").update(is_active=False)
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
         self.assertNotContains(response, "Communication")
 
     def test_header_social_links_are_optional(self):
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
         self.assertNotContains(response, 'href="https://github.com/example"')
 
         SocialLink.objects.create(platform="GitHub", url="https://github.com/example")
         SocialLink.objects.create(platform="LinkedIn", url="https://linkedin.com/in/example")
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
         self.assertContains(response, "github.com/example")
         self.assertContains(response, "linkedin.com/in/example")
 
@@ -127,7 +134,7 @@ class DynamicProfileTests(TestCase):
             icon_url_from_font_awesome='<i class="fa-brands fa-github"></i>',
         )
 
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
 
         self.assertContains(response, 'class="fa-brands fa-github"')
         self.assertContains(response, "social-row")
@@ -143,7 +150,7 @@ class DynamicProfileTests(TestCase):
         )
         ContactInfo.objects.create(medium=ContactMedium.PHONE, value="+880 1234", is_active=False)
 
-        response = self.client.get(reverse("core:home"))
+        response = self.client.get(reverse("core:home_content"))
 
         self.assertContains(response, "mailto:hello@example.com")
         self.assertContains(response, 'class="fa-regular fa-envelope"')
